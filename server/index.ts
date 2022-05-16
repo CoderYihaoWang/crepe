@@ -5,7 +5,7 @@ const app = express();
 app.get("/layers/:imageName", async (req, res) => {
     try {
         const layers = await getLayers(req.params.imageName);
-        res.json(layers)
+        res.json(layers);
     } catch (err) {
         res.status(400).json(err);
     }

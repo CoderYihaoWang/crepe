@@ -4,37 +4,36 @@ const emptyLayerHash = "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6c
 
 type ErrorResponse = { 
     stderr: string
-}
+};
 
-type History = {
+type Layer = {
     createdAt: string,
     createdBy: string,
-    size: string
-}
-
-type Layer = History & { hash: string };
+    size: string,
+    layerId?: string
+};
 
 const docker = new Docker();
 
 export default async function getLayers(imageName: string): Promise<Layer[]> {
-    const layerHashes = await getLayerHashes(imageName);
-    const history = await getHistory(imageName);
-    return createLayers(layerHashes, history);
+    const layerIds = await getLayerIds(imageName);
+    const layers = await getLayersFromHistory(imageName);
+    return addLayerIdsToLayers(layerIds, layers);
 }
 
-async function getLayerHashes(imageName: string): Promise<string[]> {
+async function getLayerIds(imageName: string): Promise<string[]> {
     try {
         const data = await docker.command(`image inspect ${imageName}`);
         return data.object[0].RootFS.Layers;
     } catch (err) {
         if ((err as ErrorResponse).stderr) {
-            throw { message: (err as ErrorResponse).stderr.trimEnd() }
+            throw { message: (err as ErrorResponse).stderr.trimEnd() };
         }
-        throw err
+        throw err;
     }
 }
 
-async function getHistory(imageName: string): Promise<History[]> {
+async function getLayersFromHistory(imageName: string): Promise<Layer[]> {
     try {
         const data = await docker.command(`history ${imageName} --format="{{.CreatedAt}} {{.Size}} {{.CreatedBy}}" --no-trunc`);
         return data.raw.trim().split("\n")
@@ -45,25 +44,31 @@ async function getHistory(imageName: string): Promise<History[]> {
                     createdAt: fields[0],
                     size: fields[1],
                     createdBy: fields.slice(2).join(" ")
-                }
+                };
             })
     } catch (err) {
         if ((err as ErrorResponse).stderr) {
-            throw { message: (err as ErrorResponse).stderr.trimEnd() }
+            throw { message: (err as ErrorResponse).stderr.trimEnd() };
         }
-        throw err
+        throw err;
     }
 }
 
-function createLayers(layerHashes: string[], history: History[]): Layer[] {
-    layerHashes = layerHashes.filter(hash => hash !== emptyLayerHash);
-    history = history.filter(h => h.size !== '0B')
-    if (layerHashes.length !== history.length) {
-        throw { message: "length mismatch"}
+function addLayerIdsToLayers(layerIds: string[], layers: Layer[]): Layer[] {
+    layerIds = layerIds.filter(hash => hash !== emptyLayerHash);
+    const nonEmpty = layers.filter(h => h.size !== '0B');
+
+    if (layerIds.length !== nonEmpty.length) {
+        throw { message: `length mismatch: ${layerIds.length} hashes vs ${nonEmpty.length} non-empty layers`};
     }
-    const layers = [];
-    for (const i in layerHashes) {
-        layers.push({...history[i], hash: layerHashes[i]})
+
+    const layersWithIds = [];
+    let i = 0;
+    for (const j in layers) {
+        if (layers[j].size !== "0B") {
+            layersWithIds.push({...layers[j], layerId: layerIds[i++]});
+        }
+        layersWithIds.push(layers[j]);
     }
-    return layers;
+    return layersWithIds;
 }
