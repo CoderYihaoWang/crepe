@@ -7,9 +7,9 @@ type ErrorResponse = {
 };
 
 type Layer = {
-    createdAt: string,
+    createdAt: Date,
     createdBy: string,
-    size: string,
+    size: number,
     layerId?: string
 };
 
@@ -35,14 +35,14 @@ async function getLayerIds(imageName: string): Promise<string[]> {
 
 async function getLayersFromHistory(imageName: string): Promise<Layer[]> {
     try {
-        const data = await docker.command(`history ${imageName} --format="{{.CreatedAt}} {{.Size}} {{.CreatedBy}}" --no-trunc`);
+        const data = await docker.command(`history ${imageName} --format="{{.CreatedAt}} {{.Size}} {{.CreatedBy}}" --no-trunc --human=false`);
         return data.raw.trim().split("\n")
             .reverse()
             .map((line: string) => {
                 const fields = line.split(" ");
                 return {
-                    createdAt: fields[0],
-                    size: fields[1],
+                    createdAt: new Date(fields[0]),
+                    size: Number.parseInt(fields[1]),
                     createdBy: fields.slice(2).join(" ")
                 };
             })
@@ -56,7 +56,7 @@ async function getLayersFromHistory(imageName: string): Promise<Layer[]> {
 
 function addLayerIdsToLayers(layerIds: string[], layers: Layer[]): Layer[] {
     layerIds = layerIds.filter(hash => hash !== emptyLayerHash);
-    const nonEmpty = layers.filter(h => h.size !== '0B');
+    const nonEmpty = layers.filter(h => h.size);
 
     if (layerIds.length !== nonEmpty.length) {
         throw { message: `length mismatch: ${layerIds.length} hashes vs ${nonEmpty.length} non-empty layers`};
@@ -65,10 +65,11 @@ function addLayerIdsToLayers(layerIds: string[], layers: Layer[]): Layer[] {
     const layersWithIds = [];
     let i = 0;
     for (const j in layers) {
-        if (layers[j].size !== "0B") {
+        if (layers[j].size) {
             layersWithIds.push({...layers[j], layerId: layerIds[i++]});
+        } else {
+           layersWithIds.push(layers[j]); 
         }
-        layersWithIds.push(layers[j]);
     }
     return layersWithIds;
 }

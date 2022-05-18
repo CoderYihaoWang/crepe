@@ -1,6 +1,8 @@
 import getLayers from "./dockerImage";
 import express from "express";
+
 const app = express();
+const serverPort = process.env.SERVER_PORT || 8080;
 
 app.get("/layers/:imageName", async (req, res) => {
     try {
@@ -11,6 +13,6 @@ app.get("/layers/:imageName", async (req, res) => {
     }
 });
 
-app.listen(8080, () => {
-    console.log("Listening on 8080");
+app.listen(serverPort, () => {
+    console.log(`Server listening on ${serverPort}...`);
 });
