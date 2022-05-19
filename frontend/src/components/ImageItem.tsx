@@ -1,5 +1,6 @@
 import { Image, Layer, StyledImage } from "../common/types";
 import LayerBar from "./LayerBar";
+import styles from "./ImageItem.module.css";
 
 type Props = {
     image: StyledImage,
@@ -12,9 +13,11 @@ type Props = {
 };
 
 export default function ImageItem(props: Props) {
-    return <div style={{display: "flex", justifyContent: "flex-start"}}>
-        <div style={{width: "10vw"}}>{props.image.name}</div>
-        <LayerBar {...props}></LayerBar>
-        <button onClick={() => props.removeImage(props.image.name)}>Remove</button>
+    return <div className={styles.container}>
+        <div className={styles.removeButton} onClick={() => props.removeImage(props.image.name)} title="remove this image">✕</div>
+        <div className={styles.imageName}>{props.image.name}</div>
+        <div className={styles.layerbar}>
+            <LayerBar {...props}></LayerBar>
+        </div>
     </div>
 }

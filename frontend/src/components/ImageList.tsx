@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
-import { Layer, Image, ErrorResponse, StyledImage, StyledLayer } from "../common/types";
+import { useState } from "react";
+import { Layer, Image, StyledImage, StyledLayer } from "../common/types";
 import { getLayers } from "../common/dockerImages";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import ImageItem from "./ImageItem";
+import styles from "./ImageList.module.css";
 
 type Props = {
   setLayer: (layer: Layer | undefined) => void,
@@ -14,10 +15,10 @@ export default function ImageList(props: Props) {
   const [images, setImages] = useState<StyledImage[]>([]);
   const [imageName, setImageName] = useState<string>('');
   const [selectedLayer, setSelectedLayer] = useState<Layer | undefined>();
-  const [errorMessage, setErrorMessage] = useState<string | undefined>();
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const handleImageChange = (imageName: string) => {
-    setErrorMessage(undefined);
+    setErrorMessage("");
     setImageName(imageName);
   };
 
@@ -90,30 +91,17 @@ export default function ImageList(props: Props) {
   };
 
   const getItemStyle = (isDragging: any, draggableStyle: any) => ({
-    //   // some basic styles to make the items look a bit nicer
-    //   userSelect: "none",
-    //   padding: grid * 2,
-    //   margin: `0 0 ${grid}px 0`,
-
-    //   // change background colour if dragging
-    //   background: isDragging ? "lightgreen" : "grey",
-
-    // styles we need to apply on draggables
+    background: isDragging ? "rgba(255, 255, 255, 0.05)" : "transparent",
     ...draggableStyle
   });
 
-  const getListStyle = (isDraggingOver: any) => ({
-    background: isDraggingOver ? "lightgray" : "white",
-  });
-
-  return <>
+  return <div className={styles.container}>
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="droppable">
-        {(provided, snapshot) => (
+        {provided => (
           <div
             {...provided.droppableProps}
             ref={provided.innerRef}
-            style={getListStyle(snapshot.isDraggingOver)}
           >
             {images.map((image, index) => (
               <Draggable key={image.name} draggableId={image.name} index={index}>
@@ -144,7 +132,14 @@ export default function ImageList(props: Props) {
         )}
       </Droppable>
     </DragDropContext>
-    <div>{errorMessage}</div>
-    <label>Add images to compare: <input value={imageName} onChange={(e) => handleImageChange(e.target.value)} onKeyUp={(e) => e.key === "Enter" && handleImageAdd()} /></label>
-  </>
+    <div className={styles.inputContainer}>
+      <div className={styles.errorMessage}>{errorMessage}</div>
+      <span className={styles.helperText}>{images.length === 0 ? "Type an image name to begin" : "Add an image to compare"} &gt;</span>
+      <input autoFocus
+        className={styles.input}
+        value={imageName} 
+        onBlur={(e) => e.target.focus()}
+        onChange={(e) => handleImageChange(e.target.value)} onKeyUp={(e) => e.key === "Enter" && handleImageAdd()} />
+    </div>
+  </div>
 }

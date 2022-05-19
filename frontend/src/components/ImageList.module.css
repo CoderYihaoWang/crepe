@@ -1,0 +1,30 @@
+.container {
+    overflow-y: auto;
+}
+
+.inputContainer {
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
+
+.errorMessage {
+    color: #E8E163;
+    font-weight: bold;
+}
+
+.helperText {
+    color: rgb(68, 173, 46);
+    font-weight: bold;
+}
+
+.input, .input:hover, .input:active {
+    padding-left: 1em;
+    width: 50%;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1em;
+    caret-color: rgb(68, 173, 46);
+}

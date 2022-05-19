@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Layer } from '../common/types';
-import './App.css';
+import styles from "./App.module.css";
 import Header from './Header';
 import ImageList from './ImageList';
 
@@ -9,10 +9,7 @@ function App() {
   const [showZeroSizedLayers, setShowZeroSizedlayers] = useState<boolean>(false);
   const [relativeSizing, setRelativeSizing] = useState<boolean>(false);
 
-  return <div style={{
-    width: "80%",
-    margin: "auto"
-  }}>
+  return <div className={styles.container}>
     <Header 
       layer={layer} 
       showZeroSizedLayers={showZeroSizedLayers} 

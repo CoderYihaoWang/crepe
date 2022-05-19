@@ -1,0 +1,22 @@
+.container {
+    display: grid;
+    grid-template-columns: 1fr 10fr 50fr;
+    align-items: center;
+    padding-top: 3em;
+    padding-bottom: 3em;
+}
+
+.container:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.imageName {
+    word-wrap: break-word;
+    overflow: hidden;
+}
+
+.removeButton:hover {
+    text-shadow: 0 0 20px #E8E163;
+    color: #E8E163;
+    cursor: pointer;
+}

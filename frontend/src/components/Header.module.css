@@ -1,0 +1,73 @@
+.topBarContainer {
+    width: 100%;
+    margin-top: 3em;
+    margin-bottom: 3em;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.titleContainer {
+    display: inline-block;
+    color: rgb(68, 173, 46);
+    font-size: 2em;
+}
+
+.title {
+    font-weight: bold;
+}
+
+.optionsContainer {
+    display: inline-flex;
+    color: white;
+    font-size: 1rem;
+}
+
+.option {
+    padding: 1em;
+    position: relative;
+    cursor: pointer;
+}
+
+.checked {
+    padding-right: 0.5em;
+    font-size: 1.2em;
+    color: rgb(68, 173, 46);
+}
+
+.nonChecked {
+    padding-right: 0.5em;
+    font-size: 1.2em;
+    color: gray;
+}
+
+.detailsContainer {
+    height: 12em;
+    display: flex;
+    flex-direction: column;
+    border-top: dashed 2px gray;
+    border-bottom: dashed 2px gray;
+    padding: 2em;
+    font-size: 0.9em;
+    overflow-y: hidden;
+}
+
+.detail {
+    display: flex;
+    margin: 0.5em;
+}
+
+.detailDescription {
+   width: 30%;
+   padding-right: 2em;
+   text-align: end;
+   font-weight: bold;
+   color: gray;
+}
+
+.detailData {
+    width: 70%;
+    max-height: 5em;
+    padding-right: 10em;
+    overflow-y: auto;
+}
