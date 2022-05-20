@@ -1,8 +1,10 @@
-import { Layer } from "../common/types";
+import { Image, Layer } from "../common/types";
+import { formatDate, formatSize } from "../common/utils";
 import styles from "./Header.module.css";
 
 type Props = {
-  layer?: Layer,
+  displayedLayer?: Layer,
+  displayedImage?: Image,
   showZeroSizedLayers: boolean,
   setShowZeroSizedLayers: (showZeroSizedLayers: boolean) => void,
   relativeSizing: boolean,
@@ -30,19 +32,19 @@ export default function Header(props: Props) {
     <div className={styles.detailsContainer}>
       <div className={styles.detail}>
         <div className={styles.detailDescription}>ID</div>
-        <div className={styles.detailData}>{props.layer && props.layer.layerId}</div>
+        <div className={styles.detailData}>{props.displayedLayer && props.displayedLayer.layerId}</div>
       </div>
       <div className={styles.detail}>
         <div className={styles.detailDescription}>Size</div>
-        <div className={styles.detailData}>{props.layer && props.layer.size}</div>
+        <div className={styles.detailData}>{props.displayedLayer && `${formatSize(props.displayedLayer.size)} (${Number((props.displayedLayer.size / props!.displayedImage!.size * 100).toFixed(1))}%)`}</div>
       </div>
       <div className={styles.detail}>
         <div className={styles.detailDescription}>Created At</div>
-        <div className={styles.detailData}>{props.layer && '' + props.layer.createdAt}</div>
+        <div className={styles.detailData}>{props.displayedLayer && formatDate(props.displayedLayer.createdAt)}</div>
       </div>
       <div className={styles.detail}>
         <div className={styles.detailDescription}>Created By</div>
-        <div className={styles.detailData}>{props.layer && props.layer.createdBy}</div>
+        <div className={styles.detailData}>{props.displayedLayer && props.displayedLayer.createdBy}</div>
       </div>
     </div>
   </div>

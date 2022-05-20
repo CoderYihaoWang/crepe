@@ -6,14 +6,15 @@ import ImageItem from "./ImageItem";
 import styles from "./ImageList.module.css";
 
 type Props = {
-  setLayer: (layer: Layer | undefined) => void,
+  setDisplayedImage: (image: Image | undefined) => void,
+  setDisplayedLayer: (layer: Layer | undefined) => void,
   showZeroSizedLayers: boolean,
   relativeSizing: boolean
 }
 
 export default function ImageList(props: Props) {
   const [images, setImages] = useState<StyledImage[]>([]);
-  const [imageName, setImageName] = useState<string>('');
+  const [imageName, setImageName] = useState<string>("");
   const [selectedLayer, setSelectedLayer] = useState<Layer | undefined>();
   const [errorMessage, setErrorMessage] = useState<string>("");
 
@@ -35,12 +36,12 @@ export default function ImageList(props: Props) {
       return [];
     }
 
-    const sizes = images.map(image => image.layers.reduce((sum, cur) => sum + cur.size, 0));
-    const maxSize = sizes.reduce((a, b) => a > b ? a : b);
+    const maxSize = images.reduce((a, b) => a> b.size ? a : b.size, 0);
 
     return images.map((image, i) => ({
       name: image.name,
-      length: sizes[i] / maxSize * 100,
+      length: image.size / maxSize * 100,
+      size: image.size,
       layers: getStyledLayers(image.layers)
     }))
   }
@@ -63,7 +64,7 @@ export default function ImageList(props: Props) {
     if ('message' in layers) {
       setErrorMessage(layers.message);
     } else {
-      setImages(getStyledImages([...images, { name: name, layers }]));
+      setImages(getStyledImages([...images, { name, layers, size: layers.reduce((sum, cur) => sum + cur.size, 0) }]));
     }
     setImageName("");
   };
@@ -73,12 +74,12 @@ export default function ImageList(props: Props) {
     const layers = images.find(image => image.name === imageName)?.layers;
     if (selectedLayer?.layerId && layers?.some(layer => layer.layerId === selectedLayer.layerId)) {
       setSelectedLayer(undefined);
-      props.setLayer(undefined);
+      props.setDisplayedLayer(undefined);
     }
     setImages(getStyledImages([...afterRemoval]));
   }
 
-  const onDragEnd = (result: any) => {
+  const handleDragEnd = (result: any) => {
     if (!result.destination) {
       return;
     }
@@ -96,7 +97,7 @@ export default function ImageList(props: Props) {
   });
 
   return <div className={styles.container}>
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DragDropContext onDragEnd={handleDragEnd}>
       <Droppable droppableId="droppable">
         {provided => (
           <div
@@ -116,9 +117,10 @@ export default function ImageList(props: Props) {
                     )}
                   >
                     <ImageItem 
-                      image={image} 
-                      layer={selectedLayer} 
-                      setLayer={props.setLayer} 
+                      displayedImage={image} 
+                      displayedLayer={selectedLayer} 
+                      setDisplayedLayer={props.setDisplayedLayer} 
+                      setDisplayedImage={props.setDisplayedImage}
                       setSelectedLayer={setSelectedLayer} 
                       showZeroSizedLayers={props.showZeroSizedLayers} 
                       relativeSizing={props.relativeSizing}
@@ -138,7 +140,6 @@ export default function ImageList(props: Props) {
       <input autoFocus
         className={styles.input}
         value={imageName} 
-        onBlur={(e) => e.target.focus()}
         onChange={(e) => handleImageChange(e.target.value)} onKeyUp={(e) => e.key === "Enter" && handleImageAdd()} />
     </div>
   </div>

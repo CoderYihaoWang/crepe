@@ -16,6 +16,9 @@ type Layer = {
 const docker = new Docker();
 
 export default async function getLayers(imageName: string): Promise<Layer[]> {
+    if (imageName.match(/[^\w\d:./-]/)) {
+        throw(`Invalid image name: ${imageName}`);    
+    }
     const layerIds = await getLayerIds(imageName);
     const layers = await getLayersFromHistory(imageName);
     return addLayerIdsToLayers(layerIds, layers);

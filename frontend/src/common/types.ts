@@ -3,7 +3,7 @@ export type ErrorResponse = {
 }
 
 export type Layer = {
-    createdAt: Date,
+    createdAt: string,
     createdBy: string,
     size: number,
     layerId: string
@@ -13,13 +13,15 @@ export type GetLayersResult = Layer[] | ErrorResponse;
 
 export type Image = {
     name: string,
+    size: number,
     layers: Layer[]
 };
 
-export type StyledLayer = Layer & { length: number};
+export type StyledLayer = Layer & { length: number };
 
 export type StyledImage = {
     name: string, 
     layers: StyledLayer[],
-    length: number
+    length: number,
+    size: number,
 };
