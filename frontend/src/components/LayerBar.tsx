@@ -52,6 +52,7 @@ export default function LayerBar(props: Props) {
       height: "1em"
     }}>{
       layers.map(layer => <div
+        key={layer.layerId ? layer.layerId : layer.createdBy}
         className={styles.layer}
         style={{
           cursor: "initial",

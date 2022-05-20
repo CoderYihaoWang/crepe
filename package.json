@@ -4,9 +4,10 @@
   "description": "",
   "main": "server/index.ts",
   "scripts": {
+    "start": "cd frontend && npm run build && cd .. && ts-node server/index.ts",
+    "dev": "concurrently \"npm run server\" \"npm run frontend\"",
     "server": "nodemon server/index.ts",
     "frontend": "cd frontend && npm run start",
-    "dev": "concurrently \"npm run server\" \"npm run frontend\"",
     "postinstall": "cd frontend && npm install",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

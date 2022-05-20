@@ -18,6 +18,10 @@
     overflow: hidden;
 }
 
+.layerBar {
+    padding-left: 1em;
+}
+
 .removeButton:hover {
     text-shadow: 0 0 20px #E8E163;
     color: #E8E163;

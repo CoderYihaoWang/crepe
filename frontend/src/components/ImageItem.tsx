@@ -23,7 +23,7 @@ export default function ImageItem(props: Props) {
         : props.displayedImage.layers.filter(layer => layer.size !== 0).length}`}>
       {props.displayedImage.name}
     </div>
-    <div className={styles.layerbar}>
+    <div className={styles.layerBar}>
       <LayerBar {...props}></LayerBar>
     </div>
   </div>
