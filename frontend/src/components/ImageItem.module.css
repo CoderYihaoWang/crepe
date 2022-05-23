@@ -1,0 +1,29 @@
+.container {
+    display: grid;
+    grid-template-columns: 1fr 10fr 50fr;
+    align-items: center;
+    padding-top: 3em;
+    padding-bottom: 3em;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.container:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.imageName {
+    word-wrap: break-word;
+    cursor: default;
+    overflow: hidden;
+}
+
+.layerBar {
+    padding-left: 1em;
+}
+
+.removeButton:hover {
+    text-shadow: 0 0 20px #E8E163;
+    color: #E8E163;
+    cursor: pointer;
+}
